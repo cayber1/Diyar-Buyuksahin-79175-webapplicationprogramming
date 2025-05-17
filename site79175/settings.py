@@ -87,3 +87,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+ALLOWED_HOSTS = ['diyarbuyuksahin-1e7e08d21c9c.herokuapp.com', 'localhost', '127.0.0.1']
