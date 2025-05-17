@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+  <div class="card p-4">
+    <h2>{{ post.title }}</h2>
+    <p class="text-muted">{{ post.created_at|date:"F j, Y H:i" }}</p>
+    <p>{{ post.content }}</p>
+
+    {% if user.is_authenticated and request.user.is_staff %}
+      <a href="{% url 'post_update' post.pk %}" class="btn btn-warning mt-2">Edit</a>
+      <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger mt-2">Delete</a>
+    {% endif %}
+
+    <a href="{% url 'post_list' %}" class="btn btn-secondary mt-2">Back to List</a>
+  </div>
+{% endblock %}
