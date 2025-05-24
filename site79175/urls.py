@@ -3,9 +3,18 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from core.views import PostViewSet
+from rest_framework.authtoken.views import obtain_auth_token
+
+router = DefaultRouter()
+router.register(r'posts', PostViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('api-token-auth/', obtain_auth_token),
+    path('api/', include(router.urls)),
     path('', include('core.urls')),
     path('admin/', admin.site.urls),
     path('', include('core.urls')), 

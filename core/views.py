@@ -1,12 +1,11 @@
-from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post
-from .forms import PostForm
-from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-from .forms import ProfileForm
 from django.contrib.auth.decorators import login_required, user_passes_test
+from rest_framework import viewsets
+from .models import Post
+from .forms import PostForm, ProfileForm
+from .serializers import PostSerializer
+from .tasks import send_post_notification  # <-- Celery görevi eklendi
 
 def post_list(request):
     posts = Post.objects.order_by('-created_at')
@@ -21,7 +20,8 @@ def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            form.save()
+            post = form.save()
+            send_post_notification.delay(post.id)  # <-- Celery görevi burada çağrılıyor
             return redirect('post_list')
     else:
         form = PostForm()
@@ -73,3 +73,7 @@ def profile_edit(request):
     else:
         form = ProfileForm(instance=profile)
     return render(request, 'core/profile_form.html', {'form': form})
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
